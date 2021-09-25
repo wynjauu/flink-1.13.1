@@ -7,6 +7,11 @@
  */
 package org.apache.flink.streaming.connectors.rabbitmq.table;
 
+import org.apache.flink.api.common.serialization.SerializationSchema;
+import org.apache.flink.streaming.connectors.rabbitmq.RMQSerializationSchema;
+import org.apache.flink.table.data.RowData;
+
+
 /**
  * flink-parent: DynamicRMQSerializationSchema
  *
@@ -14,5 +19,34 @@ package org.apache.flink.streaming.connectors.rabbitmq.table;
  * @version 1.2.0, 2021-09-24 16:59
  * @since 1.2.0, 2021-09-24 16:59
  */
-public class DynamicRMQSerializationSchema {
+public class DynamicRMQSerializationSchema implements RMQSerializationSchema<RowData> {
+    private static final long serialVersionUID = 1L;
+
+    private final String topic;
+
+    private final SerializationSchema<RowData> valueSerialization;
+
+    private final RowData.FieldGetter[] valueFieldGetters;
+
+    protected final boolean upsertMode;
+
+    public DynamicRMQSerializationSchema(
+            String topic,
+            SerializationSchema<RowData> valueSerialization,
+            RowData.FieldGetter[] valueFieldGetters, boolean upsertMode) {
+        this.topic = topic;
+        this.valueSerialization = valueSerialization;
+        this.valueFieldGetters = valueFieldGetters;
+        this.upsertMode = upsertMode;
+    }
+
+    @Override
+    public void open(SerializationSchema.InitializationContext context) throws Exception {
+        valueSerialization.open(context);
+    }
+
+    @Override
+    public byte[] serialize(RowData element) {
+        return new byte[0];
+    }
 }

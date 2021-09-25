@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.flink.fs.coshadoop;
+package org.apache.flink.fs.cosnhadoop;
 
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.configuration.Configuration;
@@ -34,21 +34,21 @@ import java.util.Collections;
 import java.util.Set;
 
 /** Simple factory for the OSS file system. */
-public class COSFileSystemFactory implements FileSystemFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(COSFileSystemFactory.class);
+public class COSNFileSystemFactory implements FileSystemFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(COSNFileSystemFactory.class);
 
     private Configuration flinkConfig;
 
     private org.apache.hadoop.conf.Configuration hadoopConfig;
 
     private static final Set<String> CONFIG_KEYS_TO_SHADE =
-            Collections.singleton("fs.oss.credentials.provider");
+            Collections.singleton("fs.cosn.credentials.provider");
 
-    private static final String FLINK_SHADING_PREFIX = "org.apache.flink.fs.osshadoop.shaded.";
+    private static final String FLINK_SHADING_PREFIX = "org.apache.flink.fs.cosnhadoop.shaded.";
 
     /**
-     * In order to simplify, we make flink oss configuration keys same with hadoop oss module. So,
-     * we add all configuration key with prefix `fs.oss` in flink conf to hadoop conf
+     * In order to simplify, we make flink cosn configuration keys same with hadoop cosn module. So,
+     * we add all configuration key with prefix `fs.cosn` in flink conf to hadoop conf
      */
     private static final String[] FLINK_CONFIG_PREFIXES = {"fs.cosn."};
 

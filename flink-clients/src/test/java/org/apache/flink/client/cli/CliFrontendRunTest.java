@@ -197,6 +197,15 @@ public class CliFrontendRunTest extends CliFrontendTestBase {
         testFrontend.run(parameters); // verifies the expected values (see below)
     }
 
+    @Test(expected = CliArgsException.class)
+    public void test()  throws Exception{
+        String[] parameters = {"-C", "file:///Users/wuyang/local/projectHome/IJWorkspace/dingdong/target/dingdong-1.0-SNAPSHOT-jar-with-dependencies.jar", getTestJarPath()};
+        Configuration configuration = new Configuration();
+        CliFrontend testFrontend =
+                new CliFrontend(configuration, Collections.singletonList(getCli()));
+        testFrontend.run(parameters);
+    }
+
     private static final class RunTestingCliFrontend extends CliFrontend {
 
         private final int expectedParallelism;

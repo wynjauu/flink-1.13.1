@@ -643,7 +643,7 @@ public class HiveParserDDLSemanticAnalyzer {
                     location =
                             HiveParserBaseSemanticAnalyzer.unescapeSQLString(
                                     child.getChild(0).getText());
-                    location = EximUtil.relativeToAbsolutePath(conf, location);
+                    //location = EximUtil.relativeToAbsolutePath(conf, location);
                     break;
                 case HiveASTParser.TOK_TABLEPROPERTIES:
                     tblProps = getProps((HiveParserASTNode) child.getChild(0));

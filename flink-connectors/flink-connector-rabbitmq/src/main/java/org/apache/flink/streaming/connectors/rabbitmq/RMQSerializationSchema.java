@@ -7,6 +7,10 @@
  */
 package org.apache.flink.streaming.connectors.rabbitmq;
 
+import org.apache.flink.annotation.PublicEvolving;
+import org.apache.flink.api.common.serialization.SerializationSchema;
+
+
 /**
  * flink-parent: RMQSerializationSchema
  *
@@ -14,5 +18,6 @@ package org.apache.flink.streaming.connectors.rabbitmq;
  * @version 1.2.0, 2021-09-24 17:04
  * @since 1.2.0, 2021-09-24 17:04
  */
-public interface RMQSerializationSchema {
+@PublicEvolving
+public interface RMQSerializationSchema<T> extends SerializationSchema<T> {
 }
