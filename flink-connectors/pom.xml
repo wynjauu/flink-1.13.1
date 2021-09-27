@@ -57,6 +57,7 @@ under the License.
 		<module>flink-connector-base</module>
 		<module>flink-file-sink-common</module>
 		<module>flink-connector-files</module>
+		<module>flink-connector-rocketmq</module>
 	</modules>
 
 	<!-- override these root dependencies as 'provided', so they don't end up
@@ -103,6 +104,7 @@ under the License.
 				<module>flink-sql-connector-hive-3.1.2</module>
 				<module>flink-sql-connector-kafka</module>
 				<module>flink-sql-connector-kinesis</module>
+				<module>flink-sql-connector-rocketmq</module>
 			</modules>
 		</profile>
 	</profiles>

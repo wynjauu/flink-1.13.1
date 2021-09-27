@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>flink-connectors</artifactId>
-        <groupId>org.apache.flink</groupId>
-        <version>1.13.1</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>flink-connectors</artifactId>
+		<groupId>org.apache.flink</groupId>
+		<version>1.13.1</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
 
-    <artifactId>flink-sql-connector-rocketmq</artifactId>
+	<artifactId>flink-sql-connector-rocketmq_${scala.binary.version}</artifactId>
+	<name>Flink : Connectors : SQL : RocketMQ</name>
 
+	<packaging>jar</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-rocketmq_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>shade-flink</id>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<shadeTestJar>false</shadeTestJar>
+							<artifactSet>
+								<includes>
+									<include>org.apache.rocketmq:*</include>
+									<include>org.apache.flink:flink-connector-rocketmq_${scala.binary.version}</include>
+								</includes>
+							</artifactSet>
+							<filters>
+								<filter>
+									<artifact>org.apache.rocketmq:*</artifact>
+									<excludes>
+										<exclude>rocketmq/rocketmq-version.properties</exclude>
+										<exclude>LICENSE</exclude>
+										<!-- Does not contain anything relevant.
+											Cites a binary dependency on jersey, but this is neither reflected in the
+											dependency graph, nor are any jersey files bundled. -->
+										<exclude>NOTICE</exclude>
+										<exclude>common/**</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<relocations>
+								<relocation>
+									<pattern>org.apache.rocketmq</pattern>
+									<shadedPattern>org.apache.flink.rocketmq.shaded.org.apache.rocketmq</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

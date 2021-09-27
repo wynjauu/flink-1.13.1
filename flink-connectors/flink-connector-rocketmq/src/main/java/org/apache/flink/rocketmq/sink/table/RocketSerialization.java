@@ -15,47 +15,73 @@
  * limitations under the License.
  */
 
-package org.apache.flink.streaming.connectors.kafka;
+package org.apache.flink.rocketmq.sink.table;
 
 import org.apache.flink.annotation.PublicEvolving;
 import org.apache.flink.api.common.serialization.SerializationSchema;
+import org.apache.flink.metrics.MetricGroup;
+import org.apache.flink.util.UserCodeClassLoader;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.rocketmq.common.message.Message;
 
-import javax.annotation.Nullable;
 
 import java.io.Serializable;
 
-/**
- * A {@link KafkaSerializationSchema} defines how to serialize values of type {@code T} into {@link
- * ProducerRecord ProducerRecords}.
- *
- * <p>Please also implement {@link KafkaContextAware} if your serialization schema needs information
- * about the available partitions and the number of parallel subtasks along with the subtask ID on
- * which the Kafka Producer is running.
- *
- * @param <T> the type of values being serialized
- */
+
 @PublicEvolving
-public interface KafkaSerializationSchema<T> extends Serializable {
+public interface RocketSerialization<T> extends Serializable {
 
     /**
      * Initialization method for the schema. It is called before the actual working methods {@link
-     * #serialize(Object, Long)} and thus suitable for one time setup work.
+     * #serialize(Object)} and thus suitable for one time setup work.
      *
-     * <p>The provided {@link SerializationSchema.InitializationContext} can be used to access
-     * additional features such as e.g. registering user metrics.
+     * <p>The provided {@link SerializationSchema.InitializationContext} can be used to access additional features such
+     * as e.g. registering user metrics.
      *
      * @param context Contextual information that can be used during initialization.
      */
-    default void open(SerializationSchema.InitializationContext context) throws Exception {}
+    @PublicEvolving
+    default void open(SerializationSchema.InitializationContext context) throws Exception {
+    }
 
     /**
-     * Serializes given element and returns it as a {@link ProducerRecord}.
+     * Serializes the incoming element to a specified type.
      *
-     * @param element element to be serialized
-     * @param timestamp timestamp (can be null)
-     * @return Kafka {@link ProducerRecord}
+     * @param element The incoming element to be serialized
+     *
+     * @return The serialized element.
      */
-    ProducerRecord<byte[], byte[]> serialize(T element, @Nullable Long timestamp);
+    Message serialize(T element);
+
+    /**
+     * A contextual information provided for {@link #open(SerializationSchema.InitializationContext)} method. It can be
+     * used to:
+     *
+     * <ul>
+     *   <li>Register user metrics via {@link SerializationSchema.InitializationContext#getMetricGroup()}
+     *   <li>Access the user code class loader.
+     * </ul>
+     */
+    @PublicEvolving
+    interface InitializationContext {
+        /**
+         * Returns the metric group for the parallel subtask of the source that runs this {@link
+         * SerializationSchema}.
+         *
+         * <p>Instances of this class can be used to register new metrics with Flink and to create a
+         * nested hierarchy based on the group names. See {@link MetricGroup} for more information
+         * for the metrics system.
+         *
+         * @see MetricGroup
+         */
+        MetricGroup getMetricGroup();
+
+        /**
+         * Gets the {@link UserCodeClassLoader} to load classes that are not in system's classpath,
+         * but are part of the jar file of a user job.
+         *
+         * @see UserCodeClassLoader
+         */
+        UserCodeClassLoader getUserCodeClassLoader();
+    }
 }

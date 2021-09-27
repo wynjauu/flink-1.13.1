@@ -103,6 +103,18 @@ public class JsonRowDataDeserializationSchema implements DeserializationSchema<R
             return null;
         }
         try {
+//            System.out.println("-------->json message="+new String(message));//这边打印的是原始的json字段数据
+//            System.out.println("-------->json JsonNode="+deserializeToJsonNode(message));
+//            System.out.println("-------->json RowData="+convertToRowData(deserializeToJsonNode(message)));//这个打印的定义的table里面的列字段
+            /**
+             * create table t_kafka_source (
+             *     station_id STRING,
+             *     `time` STRING
+             * )
+             * -------->json message={"uid":"5ffb2b5fbef9980001c69f1b","is_add":0,"is_vip":0,"station_id":"5c04bda4716de1403a8b6799","is_submit":0,"time":1632678190,"is_settle":0}
+             * -------->json JsonNode={"uid":"5ffb2b5fbef9980001c69f1b","is_add":0,"is_vip":0,"station_id":"5c04bda4716de1403a8b6799","is_submit":0,"time":1632678190,"is_settle":0}
+             * -------->json RowData=+I(5c04bda4716de1403a8b6799,1632678190)
+             */
             return convertToRowData(deserializeToJsonNode(message));
         } catch (Throwable t) {
             if (ignoreParseErrors) {
