@@ -24,12 +24,17 @@ import org.apache.flink.api.dag.Pipeline;
 import org.apache.flink.api.dag.Transformation;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.graph.StreamGraph;
+import org.apache.flink.streaming.api.graph.StreamNode;
 import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.delegation.Executor;
 import org.apache.flink.table.planner.utils.ExecutorUtils;
 
-import java.util.List;
+import org.apache.flink.util.StringUtils;
 
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 /**
  * An implementation of {@link Executor} that is backed by a {@link StreamExecutionEnvironment}.
  * This is the only executor that {@link org.apache.flink.table.planner.delegation.StreamPlanner}
@@ -49,6 +54,28 @@ public class StreamExecutor extends ExecutorBase {
         StreamGraph streamGraph =
                 ExecutorUtils.generateStreamGraph(getExecutionEnvironment(), transformations);
         streamGraph.setJobName(getNonEmptyJobName(jobName));
+
+        System.out.println("----->Set user defined parallelism streamingPlan before: \n"
+                + streamGraph.getStreamingPlanAsJSON());
+
+        String udp = tableConfig.getConfiguration().getString("user.defined.parallelism", "");
+        System.out.println("get user.defined.parallelism: " + udp);
+        if (!StringUtils.isNullOrWhitespaceOnly(udp)) {
+            String[] udpArray = udp.split(",");
+            Collection<StreamNode> streamNodes = streamGraph.getStreamNodes();
+            int index = 0;
+            if (streamNodes.size() <= udpArray.length) {
+                List<String> udpList = Arrays.asList(udpArray);
+
+                for (StreamNode streamNode : streamNodes) {
+                    streamNode.setParallelism(Integer.parseInt(udpList.get(index)));
+                    index++;
+                }
+//                System.out.println("Set user defined parallelism streamingPlan after "
+//                        + streamGraph.getStreamingPlanAsJSON());
+            }
+        }
+
         return streamGraph;
     }
 }

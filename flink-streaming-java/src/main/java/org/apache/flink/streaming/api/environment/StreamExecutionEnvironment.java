@@ -104,6 +104,7 @@ import javax.annotation.Nullable;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,6 +112,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -1733,6 +1735,20 @@ public class StreamExecutionEnvironment {
                 getTypeInfo(function, sourceName, SourceFunction.class, typeInfo);
 
         boolean isParallel = function instanceof ParallelSourceFunction;
+//        try {
+//            Class<? extends SourceFunction> functionClass = function.getClass();
+//            if ("org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer".equals(
+//                    functionClass.getName())) {
+//                Field[] declaredFields = functionClass.getDeclaredFields();
+//                for (Field field : declaredFields) {
+//                    if ("properties".equals(field.getName())) {
+//                        field.setAccessible(true);
+//                        Properties properties = (Properties) field.get(functionClass);
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//        }
 
         clean(function);
 

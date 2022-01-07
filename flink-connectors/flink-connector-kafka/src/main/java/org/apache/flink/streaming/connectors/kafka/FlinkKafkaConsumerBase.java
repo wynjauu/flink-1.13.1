@@ -56,6 +56,7 @@ import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicPartition
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicsDescriptor;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPeriodicWatermarksAdapter;
 import org.apache.flink.streaming.runtime.operators.util.AssignerWithPunctuatedWatermarksAdapter;
+import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.ExceptionUtils;
 import org.apache.flink.util.SerializedValue;
 
@@ -73,6 +74,7 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.apache.flink.streaming.connectors.kafka.internals.metrics.KafkaConsumerMetricConstants.COMMITS_FAILED_METRICS_COUNTER;
 import static org.apache.flink.streaming.connectors.kafka.internals.metrics.KafkaConsumerMetricConstants.COMMITS_SUCCEEDED_METRICS_COUNTER;
@@ -575,6 +577,17 @@ public abstract class FlinkKafkaConsumerBase<T> extends RichParallelSourceFuncti
 
         subscribedPartitionsToStartOffsets = new HashMap<>();
         final List<KafkaTopicPartition> allPartitions = partitionDiscoverer.discoverPartitions();
+
+        //这里的日志只会打印在Stdout下面，启动日志不会有，因为属于算子里面，类似spark的Task执行任务算子里的代码
+        //FLink jm tm  =>  spark executor task
+//        System.out.println("FlinkKafkaConsumer info topicString base open...");
+//        if (!CollectionUtil.isNullOrEmpty(allPartitions)) {
+//            String allPartitionsTopic = allPartitions
+//                    .stream()
+//                    .map(KafkaTopicPartition::getTopic)
+//                    .collect(Collectors.joining(","));
+//            System.out.println("FlinkKafkaConsumer info topicString " + allPartitionsTopic);
+//        }
         if (restoredState != null) {
             for (KafkaTopicPartition partition : allPartitions) {
                 if (!restoredState.containsKey(partition)) {

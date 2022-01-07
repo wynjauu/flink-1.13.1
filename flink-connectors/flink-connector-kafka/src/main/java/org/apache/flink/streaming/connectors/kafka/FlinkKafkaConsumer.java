@@ -30,8 +30,10 @@ import org.apache.flink.streaming.connectors.kafka.internals.KafkaFetcher;
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaPartitionDiscoverer;
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicPartition;
 import org.apache.flink.streaming.connectors.kafka.internals.KafkaTopicsDescriptor;
+import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.PropertiesUtil;
 import org.apache.flink.util.SerializedValue;
+
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -221,6 +223,19 @@ public class FlinkKafkaConsumer<T> extends FlinkKafkaConsumerBase<T> {
 
         this.properties = props;
         setDeserializer(this.properties);
+
+        String groupId = properties.getProperty(ConsumerConfig.GROUP_ID_CONFIG, "");
+        String bootstrapServers = properties.getProperty(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                "");
+        System.out.println("FlinkKafkaConsumer info bootstrapServers " + bootstrapServers);
+        System.out.println("FlinkKafkaConsumer info groupId " + groupId);
+        if (!CollectionUtil.isNullOrEmpty(topics)) {
+            System.out.println("FlinkKafkaConsumer info topicString " + String.join(",", topics));
+        }
+        if (null != subscriptionPattern) {
+            System.out.println("FlinkKafkaConsumer info topicString " + subscriptionPattern.pattern());
+        }
 
         // configure the polling timeout
         try {

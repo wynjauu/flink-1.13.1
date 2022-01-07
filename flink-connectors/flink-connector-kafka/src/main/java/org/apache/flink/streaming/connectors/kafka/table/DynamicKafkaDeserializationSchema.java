@@ -114,7 +114,7 @@ class DynamicKafkaDeserializationSchema implements KafkaDeserializationSchema<Ro
              * 接入的是完整的数据
              * -------->ConsumerRecord={"uid":"5b51dbca4805e908a3e4b3a4","is_add":0,"is_vip":0,"station_id":"5bf2902b716de100468c6c9f","is_submit":0,"time":1632682615,"is_settle":0}
              */
-            System.out.println("-------->ConsumerRecord="+new String(record.value()));
+            //System.out.println("-------->ConsumerRecord="+new String(record.value()));
             valueDeserialization.deserialize(record.value(), collector);
             return;
         }
